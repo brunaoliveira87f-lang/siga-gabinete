@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SIGA Pro | Portal Administrativo</title>
+<style>
+:root{
+  --blue950:#001a40;--blue900:#002f6c;--blue700:#0047a8;--blue050:#eef5ff;
+  --bg:#f4f7fb;--text:#102033;--muted:#64748b;--line:#d9e3f0;
+  --green:#057a55;--greenbg:#ddf7ea;--orange:#c45f00;--orangebg:#fff0dc;
+  --red:#d71920;--redbg:#ffe3e8;--purple:#6d28d9;--purplebg:#efe7ff;
+  --shadow:0 18px 45px rgba(15,23,42,.08);--radius:18px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+.login{position:fixed;inset:0;z-index:99;background:linear-gradient(135deg,#002f6c,#001a40 70%,#001126);display:flex;align-items:center;justify-content:center;padding:24px}
+.login-card{width:min(520px,100%);background:white;border-radius:28px;box-shadow:0 35px 120px rgba(0,0,0,.35);padding:34px;text-align:center}
+.login-card img{width:220px;background:#002f6c;padding:18px;border-radius:18px;margin-bottom:18px}
+.login-card h1{margin:0;color:#001a40;font-size:28px}.login-card p{color:#64748b;line-height:1.6}
+.login-card input,.login-card select{width:100%;margin-top:10px}
+.app{display:flex;min-height:100vh}.sidebar{width:300px;min-height:100vh;position:fixed;inset:0 auto 0 0;padding:22px 18px;color:white;background:linear-gradient(180deg,#003b86,#002f6c 48%,#001d45);display:flex;flex-direction:column}
+.logo-box{height:98px;display:grid;place-items:center;border-radius:20px;border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);margin-bottom:16px}.logo-box img{width:215px;max-height:76px;object-fit:contain}
+.nav-title{color:#b7c7e6;text-transform:uppercase;font-size:11px;letter-spacing:.08em;margin:18px 10px 8px}
+.nav button{width:100%;min-height:45px;border:0;border-radius:13px;padding:0 12px;display:flex;align-items:center;gap:11px;color:#f8fbff;background:transparent;text-align:left;margin:3px 0}
+.nav button:hover,.nav button.active{background:rgba(255,255,255,.14)}
+.sidebar-footer{margin-top:auto;padding-top:16px;border-top:1px solid rgba(255,255,255,.16);font-size:12px;color:#dbe8ff;line-height:1.45}
+.main{margin-left:300px;width:calc(100% - 300px)}.topbar{height:88px;padding:0 30px;background:rgba(255,255,255,.94);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.topbar h1{margin:0;font-size:25px;color:var(--blue950)}.topbar p{margin:5px 0 0;color:var(--muted);font-size:13px}
+.top-actions{display:flex;gap:10px;align-items:center}.avatar{width:42px;height:42px;display:grid;place-items:center;border-radius:50%;background:#f1f5f9;border:1px solid var(--line);font-weight:900}
+.content{padding:26px 30px 38px}.card,.panel,.table-card{background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.panel,.table-card{padding:20px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-bottom:18px}.kpi{min-height:142px;padding:22px;display:flex;justify-content:space-between;gap:16px}.kpi small{display:block;font-weight:900;color:var(--blue950)}.kpi h2{margin:13px 0 8px;font-size:37px;color:var(--blue950);line-height:1}
+.ico{width:58px;height:58px;border-radius:15px;display:grid;place-items:center;font-size:26px}.i-blue{background:#e8f1ff;color:var(--blue700)}.i-green{background:var(--greenbg);color:var(--green)}.i-red{background:var(--redbg);color:var(--red)}.i-purple{background:var(--purplebg);color:var(--purple)}
+.grid{display:grid;grid-template-columns:2fr .9fr;gap:18px;margin-bottom:18px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:18px}
+.panel-head{min-height:34px;margin-bottom:15px;display:flex;align-items:center;justify-content:space-between;gap:12px}.panel-head h3{margin:0;color:var(--blue950);font-size:18px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.toolbar-right{display:flex;gap:10px;flex-wrap:wrap}
+input,select,textarea{border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:white;color:var(--text);outline:0}.search{min-width:280px}
+.btn{min-height:43px;border:1px solid var(--line);border-radius:13px;padding:0 13px;background:white;color:var(--blue700);font-weight:900;display:inline-flex;align-items:center;justify-content:center;gap:8px}.btn.primary{background:var(--blue700);color:white;border-color:var(--blue700)}.btn.danger{color:var(--red);background:var(--redbg);border-color:#ffd0d6}
+.form-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}label{display:grid;gap:7px}label span{color:#334155;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.04em}.span2{grid-column:span 2}.span4{grid-column:1/-1}.actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
+.table-wrap{overflow:auto}table{width:100%;min-width:1050px;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:15px;overflow:hidden}th{padding:14px 13px;background:var(--blue900);color:white;text-align:left;font-size:13px}td{padding:13px;border-bottom:1px solid var(--line);vertical-align:top;font-size:13px}tr:last-child td{border-bottom:0}td small{display:block;margin-top:4px;color:var(--muted);line-height:1.35}
+.status{display:inline-block;border-radius:99px;padding:6px 10px;font-size:12px;font-weight:900;white-space:nowrap}.s-aberto{background:var(--orangebg);color:var(--orange)}.s-oc{background:#e8f1ff;color:var(--blue700)}.s-doc{background:#fff7d7;color:#946000}.s-pendente{background:var(--orangebg);color:var(--orange)}.s-final{background:var(--greenbg);color:var(--green)}.s-atraso{background:var(--redbg);color:var(--red)}.s-risco{background:var(--purplebg);color:var(--purple)}
+.row-actions{display:flex;gap:6px}.row-actions button{width:34px;height:34px;border:0;border-radius:10px;background:var(--blue050);color:var(--blue700)}
+.metric{min-height:42px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px dashed var(--line);color:#334155}.metric strong{color:var(--blue950)}
+.alert-row{display:grid;grid-template-columns:36px 1fr 92px;gap:10px;align-items:center;min-height:66px;padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:white;margin-bottom:10px}.alert-row b{font-size:20px}.alert-row strong{color:var(--blue950);font-size:13px}.alert-row p{margin:2px 0 0;color:#30405a;font-size:13px}.alert-row button{border:0;color:var(--blue700);background:transparent;font-weight:900}
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}.tabs button{border:1px solid var(--line);border-radius:99px;background:white;color:var(--blue700);padding:9px 13px;font-weight:900}.tabs button.active{background:var(--blue700);color:white;border-color:var(--blue700)}
+.dossie-head{display:grid;grid-template-columns:1.4fr .6fr;gap:18px;margin-bottom:18px}.big-title{font-size:28px;color:var(--blue950);margin:0}.subtle{color:var(--muted);line-height:1.7}
+.doc-card,.attach-card,.calendar-item,.search-result{border:1px solid var(--line);border-radius:14px;padding:13px;margin-top:10px;background:white}.doc-card,.attach-card{display:flex;align-items:center;justify-content:space-between;gap:12px}.doc-card small,.attach-card small,.search-result small{display:block;color:var(--muted);margin-top:4px}
+.calendar-item{display:grid;grid-template-columns:74px 1fr auto;align-items:center;gap:12px}.date-pill{border-radius:14px;background:var(--blue050);color:var(--blue700);font-weight:900;text-align:center;padding:10px 8px}.date-pill small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.timeline{display:grid;gap:12px}.timeline-item{display:grid;grid-template-columns:34px 1fr;gap:10px;align-items:start}.timeline-dot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--blue050);color:var(--blue700);font-weight:900;border:1px solid var(--line)}.timeline-box{background:#f8fbff;border:1px solid var(--line);border-radius:13px;padding:11px 12px}.timeline-box strong{display:block;color:var(--blue950);font-size:13px}.timeline-box small{color:var(--muted)}
+.dropzone{border:2px dashed #b9c8dc;background:#f8fbff;border-radius:18px;padding:22px;text-align:center;color:#334155}.dropzone input{display:none}
+.modal{position:fixed;inset:0;background:rgba(0,26,64,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}.modal.open{display:flex}.modal-box{width:min(1120px,100%);max-height:90vh;overflow:auto;background:white;border-radius:22px;box-shadow:0 30px 90px rgba(0,0,0,.25);padding:24px}
+.toast{display:none;position:fixed;right:24px;bottom:24px;background:var(--blue950);color:white;border-radius:15px;box-shadow:var(--shadow);padding:15px 18px;z-index:999}
+@media(max-width:1180px){.sidebar{position:static;width:100%;min-height:auto}.app{display:block}.main{margin-left:0;width:100%}.kpis,.grid,.grid3,.form-grid,.dossie-head{grid-template-columns:1fr}.span2,.span4{grid-column:auto}.topbar{height:auto;align-items:stretch;flex-direction:column;padding:16px}.search{min-width:100%}}
+
+.user-profile-mini{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:16px;
+  padding:7px 10px 7px 8px;
+}
+.user-profile-mini .user-meta{
+  display:grid;
+  line-height:1.15;
+}
+.user-profile-mini strong{
+  font-size:13px;
+  color:var(--blue950);
+}
+.user-profile-mini small{
+  color:var(--muted);
+  font-size:11px;
+}
+.header-search{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.header-search input{
+  min-width:380px;
+}
+.cards-list{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:14px;
+}
+.process-card{
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#fff;
+  padding:16px;
+  box-shadow:0 10px 24px rgba(15,23,42,.05);
+}
+.process-card header{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+  margin-bottom:10px;
+}
+.process-card h4{
+  margin:0;
+  color:var(--blue950);
+  font-size:15px;
+}
+.process-card p{
+  margin:8px 0;
+  color:#334155;
+  line-height:1.45;
+  font-size:13px;
+}
+.card-meta{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-top:12px;
+}
+.card-meta div{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:8px;
+  background:#f8fbff;
+}
+.card-meta small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  font-weight:900;
+}
+.card-meta strong{
+  font-size:12px;
+  color:var(--blue950);
+}
+.autosave-note{
+  color:var(--muted);
+  font-size:12px;
+  margin-top:10px;
+}
+@media(max-width:1180px){
+  .cards-list{grid-template-columns:1fr}
+  .header-search input{min-width:100%}
+  .header-search{width:100%;align-items:stretch}
+  .user-profile-mini{justify-content:flex-start}
+}
+
+</style>
+</head>
+<body>
+<div class="login" id="loginScreen">
+  <div class="login-card">
+    <img src="data:image/png;base64,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" alt="FIEP">
+    <h1>SIGA Pro</h1>
+    <p>Portal Administrativo Inteligente<br>Salvamento automático, anexos locais e auditoria.</p>
+    <input id="loginUsuario" placeholder="Nome do usuário ou área">
+    <select id="loginPerfil">
+      <option>Secretária Executiva</option><option>Supervisão</option><option>Compras</option><option>Financeiro</option><option>Consulta</option>
+    </select>
+    <button class="btn primary" onclick="entrar()">Acessar sistema</button>
+    <button class="btn" onclick="entrar(true)">Entrar como visitante</button>
+  </div>
+</div>
+
+<div class="app">
+<aside class="sidebar">
+  <div class="logo-box"><img src="data:image/png;base64,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" alt="FIEP"></div>
+  <div class="nav">
+    <div class="nav-title">SIGA</div>
+    <button class="active" onclick="page('dashboard',this)">🏠 Dashboard</button>
+    <button onclick="page('nova',this)">➕ Nova Solicitação</button>
+    <button onclick="page('operacao',this)">⚙️ Operação</button>
+    <button onclick="page('agenda',this)">📅 Agenda</button>
+    <button onclick="page('pesquisa',this)">🔎 Pesquisa Global</button>
+    <button onclick="page('relatorios',this)">📊 Relatórios</button>
+    <div class="nav-title">Governança</div>
+    <button onclick="page('auditoria',this)">🧾 Auditoria</button>
+    <button onclick="page('assistente',this)">🤖 Assistente</button>
+    <div class="nav-title">Base</div>
+    <button onclick="exportCSV()">⬇️ Exportar CSV</button>
+    <button onclick="exportBackup()">💾 Backup JSON</button>
+    <button onclick="document.getElementById('importFile').click()">📥 Importar Backup</button>
+    <input id="importFile" type="file" accept=".json" style="display:none" onchange="importBackup(event)">
+    <button onclick="logout()">🚪 Logout</button>
+    <button onclick="resetAll()">🧹 Limpar Tudo</button>
+  </div>
+  <div class="sidebar-footer"><strong>SIGA</strong><br>Portal Administrativo Inteligente<br>Salvamento automático no navegador.</div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div><h1 id="title">Dashboard Executivo</h1><p id="subtitle">Visão geral das solicitações, prazos, operação, auditoria e documentos.</p></div>
+  <div class="top-actions">
+    <div class="header-search">
+      <input class="search" id="globalSearch" placeholder="Pesquisa global..." oninput="renderSearch(false)">
+      <button class="btn" onclick="pageById('pesquisa')">Buscar</button>
+    </div>
+    <button class="btn danger" onclick="logout()">Logout</button>
+    <div class="user-profile-mini">
+      <div class="avatar" id="avatarUser">👤</div>
+      <div class="user-meta">
+        <strong id="userDisplay">Usuário</strong>
+        <small id="userRoleDisplay">SIGA Pro</small>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="content">
+  <div id="dashboard">
+    <div class="kpis">
+      <div class="card kpi"><div><small>Solicitações abertas</small><h2 id="kOpen">0</h2></div><div class="ico i-blue">📋</div></div>
+      <div class="card kpi"><div><small>Críticas</small><h2 id="kCrit">0</h2></div><div class="ico i-red">🚨</div></div>
+      <div class="card kpi"><div><small>Documentos</small><h2 id="kDocs">0</h2></div><div class="ico i-purple">📄</div></div>
+      <div class="card kpi"><div><small>Finalizadas</small><h2 id="kDone">0</h2></div><div class="ico i-green">✅</div></div>
+    </div>
+    <div class="grid">
+      <div class="panel"><div class="panel-head"><h3>Alertas prioritários</h3><span id="alertCount">0 alertas</span></div><div id="alertsMini"></div></div>
+      <div class="panel"><div class="panel-head"><h3>Ações rápidas</h3></div><div class="actions" style="justify-content:flex-start;flex-wrap:wrap"><button class="btn primary" onclick="pageById('nova')">Nova Solicitação</button><button class="btn" onclick="pageById('operacao')">Operação</button><button class="btn" onclick="exportBackup()">Backup</button></div></div>
+    </div>
+    <div class="grid3">
+      <div class="panel"><div class="panel-head"><h3>Saúde operacional</h3></div><div class="metric"><span>Sem OC</span><strong id="semOC">0</strong></div><div class="metric"><span>Competência em risco</span><strong id="riscoComp">0</strong></div></div>
+      <div class="panel"><div class="panel-head"><h3>Resumo financeiro</h3></div><div class="metric"><span>Total monitorado</span><strong id="totalValor">R$ 0,00</strong></div><div class="metric"><span>Em andamento</span><strong id="valorAberto">R$ 0,00</strong></div></div>
+      <div class="panel"><div class="panel-head"><h3>Governança</h3></div><div class="metric"><span>Anexos</span><strong id="kAnexos">0</strong></div><div class="metric"><span>Auditoria</span><strong id="kAudit">0</strong></div></div>
+    </div>
+    
+    <div class="table-card">
+      <div class="toolbar">
+        <h3>Visão rápida dos processos</h3>
+        <div class="toolbar-right"><button class="btn" onclick="pageById('operacao')">Ver operação completa</button></div>
+      </div>
+      <div id="cardsRecentes" class="cards-list"></div>
+    </div>
+
+    <div class="table-card"><div class="toolbar"><h3>Solicitações recentes</h3><div class="toolbar-right"><input class="search" id="buscaDash" oninput="renderAll()" placeholder="Buscar..."></div></div><div id="tableDash" class="table-wrap"></div></div>
+  </div>
+
+  <div id="nova" class="hidden">
+    <div class="panel"><div class="panel-head"><h3 id="formTitle">Nova Solicitação</h3><span>Cadastro mestre</span></div>
+      <form id="form">
+        <input type="hidden" id="editIndex">
+        <div class="form-grid">
+          <label><span>Nº Solicitação</span><input required id="req"></label>
+          <label><span>Data da Solicitação</span><input id="dataReq" type="date"></label>
+          <label><span>Módulo</span><select id="modulo"><option>Compras</option><option>Financeiro</option><option>Diretoria</option><option>Eventos</option><option>Viagens</option><option>Documentos</option></select></label>
+          <label><span>Tipo</span><select id="tipo"><option>Nota Fiscal</option><option>Boleto</option><option>Contrato</option><option>Compra Simplificada</option><option>Pequeno Vulto</option><option>Reembolso</option><option>Justificativa</option></select></label>
+          <label class="span2"><span>Objeto da Solicitação</span><input required id="desc" placeholder="Descreva a solicitação"></label>
+          <label><span>Favorecido</span><input id="favorecido" placeholder="Favorecido"></label>
+          <label><span>Valor R$</span><input id="valor" type="number" step="0.01" placeholder="0,00"></label>
+          <label><span>Centro de Custo</span><input id="cc" placeholder="Centro de custo"></label>
+          <label><span>CR</span><input id="cr" placeholder="CR"></label>
+          <label><span>UD</span><input id="ud" placeholder="UD"></label>
+          <label><span>Competência Contábil</span><input id="competencia" type="month"></label>
+          <label><span>Ordem de Compra</span><input id="oc" placeholder="OC-1.000000"></label>
+          <label><span>Nota Fiscal / Documento</span><input id="nf" placeholder="NF, boleto, contrato..."></label>
+          <label><span>Prazo para Lançamento</span><input id="prazo" type="date"></label>
+          <label><span>Responsável</span><input id="responsavel" placeholder="Responsável"></label>
+          <label><span>Prioridade</span><select id="prioridade"><option>Normal</option><option>Alta</option><option>Crítica</option></select></label>
+          <label><span>Status Inicial</span><select id="status"><option>Aguardando Aprovação</option><option>OC Emitida</option><option>Documento Recebido</option><option>Pendente de Lançamento</option><option>Lançado no ERP</option><option>Em Atraso</option><option>Risco de Competência</option><option>Finalizado</option></select></label>
+          <label class="span4"><span>Histórico / Observações</span><textarea id="obs" rows="4" placeholder="Orientações, pendências, contexto ou justificativa"></textarea></label>
+        </div>
+        <p class="autosave-note">As alterações são salvas automaticamente no navegador. Use Backup para guardar uma cópia externa.</p><div class="actions"><button type="button" class="btn" onclick="clearForm()">Limpar</button><button class="btn primary" type="submit">Salvar Solicitação</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div id="operacao" class="hidden">
+    <div class="table-card"><div class="toolbar"><h3>Operação</h3><div class="toolbar-right"><select id="filtroStatus" onchange="renderAll()"><option value="">Todos os status</option></select><input class="search" id="buscaOp" oninput="renderAll()" placeholder="Buscar solicitação..."></div></div><div id="tableOp" class="table-wrap"></div></div>
+  </div>
+
+  <div id="agenda" class="hidden"><div class="grid"><div class="panel"><div class="panel-head"><h3>Agenda de prazos</h3><span id="agendaCount">0 itens</span></div><div id="agendaList"></div></div><div class="panel"><div class="panel-head"><h3>Resumo</h3></div><div class="metric"><span>Vencidos</span><strong id="agVencidos">0</strong></div><div class="metric"><span>Até 3 dias</span><strong id="ag3">0</strong></div><div class="metric"><span>Até 7 dias</span><strong id="ag7">0</strong></div></div></div></div>
+  <div id="pesquisa" class="hidden"><div class="panel"><div class="panel-head"><h3>Pesquisa Global</h3><span id="searchCount">0 resultados</span></div><input class="search" id="searchPageInput" style="width:100%" placeholder="Pesquise por solicitação, OC, favorecido, objeto, status..." oninput="renderSearch(true)"><div id="searchResults"></div></div></div>
+  <div id="relatorios" class="hidden"><div class="panel"><div class="panel-head"><h3>Relatório Executivo</h3><div><button class="btn" onclick="exportCSV()">CSV</button> <button class="btn" onclick="window.print()">Imprimir/PDF</button></div></div><div id="relatorio" class="subtle"></div></div></div>
+  <div id="auditoria" class="hidden"><div class="panel"><div class="panel-head"><h3>Trilha de Auditoria</h3><span id="auditCount">0 eventos</span></div><div id="auditList" class="timeline"></div></div></div>
+  <div id="assistente" class="hidden"><div class="grid"><div class="panel"><div class="panel-head"><h3>Assistente Interno</h3></div><textarea id="pergunta" rows="4" style="width:100%" placeholder="Ex.: Quais vencem hoje? Quais estão sem OC?"></textarea><div class="actions"><button class="btn primary" onclick="responderIA()">Responder</button></div><div id="respostaIA" class="panel" style="margin-top:14px;box-shadow:none">A resposta aparecerá aqui.</div></div><div class="panel"><div class="panel-head"><h3>Perguntas rápidas</h3></div><div class="actions" style="justify-content:flex-start;flex-wrap:wrap"><button class="btn" onclick="quickAsk('Quais vencem hoje?')">Vencem hoje</button><button class="btn" onclick="quickAsk('Quais estão sem OC?')">Sem OC</button><button class="btn" onclick="quickAsk('Quais estão pendentes?')">Pendentes</button></div></div></div></div>
+</section>
+</main>
+</div>
+
+<div class="modal" id="modal"><div class="modal-box"><div class="panel-head"><h3 id="modalTitle">Dossiê do Processo</h3><button class="btn" onclick="closeModal()">Fechar</button></div><div id="modalBody"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const STATUS = ["Aguardando Aprovação","OC Emitida","Documento Recebido","Pendente de Lançamento","Lançado no ERP","Em Atraso","Risco de Competência","Finalizado"];
+let dados = JSON.parse(localStorage.getItem("siga_dados") || "[]");
+let documentos = JSON.parse(localStorage.getItem("siga_docs") || "[]");
+let anexos = JSON.parse(localStorage.getItem("siga_anexos") || "[]");
+let audit = JSON.parse(localStorage.getItem("siga_audit") || "[]");
+
+function $(id){ return document.getElementById(id); }
+async function save(){
+  try{
+    if(typeof dbSet === "function" && db){
+      await dbSet("dados",dados);
+      await dbSet("documentos",documentos);
+      await dbSet("anexos",anexos);
+      await dbSet("audit",audit);
+    } else {
+      localStorage.setItem("siga_dados",JSON.stringify(dados));
+      localStorage.setItem("siga_docs",JSON.stringify(documentos));
+      localStorage.setItem("siga_anexos",JSON.stringify(anexos));
+      localStorage.setItem("siga_audit",JSON.stringify(audit));
+    }
+  }catch(e){
+    console.warn("Falha ao salvar:", e);
+  }
+}
+function salvarManual(){
+  save();
+  toast("Dados salvos com sucesso no navegador.");
+}
+async function logout(){
+  if(typeof save === "function") await save();
+  localStorage.removeItem("siga_pro_user");
+  localStorage.removeItem("siga_pro_role");
+  localStorage.removeItem("siga_user");
+  $("loginUsuario").value="";
+  $("avatarUser").textContent="👤";
+  if($("userDisplay")) $("userDisplay").textContent="Usuário";
+  if($("userRoleDisplay")) $("userRoleDisplay").textContent="SIGA Pro";
+  $("loginScreen").style.display="flex";
+  toast("Logout realizado. Dados salvos automaticamente.");
+}
+function moeda(v){ return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}); }
+function hoje(){ return new Date().toISOString().slice(0,10); }
+function mesAtual(){ return new Date().toISOString().slice(0,7); }
+function dataBR(d){ if(!d) return "-"; const p=d.split("-"); return p.length===3 ? `${p[2]}/${p[1]}/${p[0]}` : d; }
+function dataHoraBR(d){ return d ? new Date(d).toLocaleString("pt-BR") : "-"; }
+function diasAte(d){ if(!d) return 999; return Math.ceil((new Date(d+"T00:00:00") - new Date(hoje()+"T00:00:00"))/86400000); }
+function cls(s){ s=s||"Aguardando Aprovação"; if(s==="Aguardando Aprovação")return"s-aberto"; if(s==="OC Emitida")return"s-oc"; if(s==="Documento Recebido")return"s-doc"; if(s==="Pendente de Lançamento")return"s-pendente"; if(["Lançado no ERP","Finalizado"].includes(s))return"s-final"; if(s==="Em Atraso")return"s-atraso"; return"s-risco"; }
+function addAudit(req,acao,detalhe){ audit.unshift({data:new Date().toISOString(),req,acao,detalhe}); }
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.style.display="block"; setTimeout(()=>t.style.display="none",2600); }
+
+function entrar(visitante=false){
+  const nome=visitante?"Visitante":($("loginUsuario").value||"Usuário");
+  const perfil=visitante?"Consulta":($("loginPerfil") ? $("loginPerfil").value : "SIGA Pro");
+  localStorage.setItem("siga_pro_user",nome);
+  localStorage.setItem("siga_pro_role",perfil);
+  $("loginScreen").style.display="none";
+  $("avatarUser").textContent=nome.slice(0,1).toUpperCase();
+  if($("userDisplay")) $("userDisplay").textContent=nome.split(" ").slice(0,2).join(" ");
+  if($("userRoleDisplay")) $("userRoleDisplay").textContent=perfil;
+  $("responsavel").value=nome;
+  toast("Bem-vindo(a), "+nome+".");
+}
+function carregarUsuario(){
+  const nome=localStorage.getItem("siga_pro_user") || localStorage.getItem("siga_user");
+  const perfil=localStorage.getItem("siga_pro_role") || "SIGA Pro";
+  if(nome){
+    $("loginScreen").style.display="none";
+    $("avatarUser").textContent=nome.slice(0,1).toUpperCase();
+    if($("userDisplay")) $("userDisplay").textContent=nome.split(" ").slice(0,2).join(" ");
+    if($("userRoleDisplay")) $("userRoleDisplay").textContent=perfil;
+    $("responsavel").value=nome;
+  }
+}
+function proximoReq(){
+  const ano = new Date().getFullYear();
+  const max = dados.reduce((m,x)=>{
+    const match = String(x.req||"").match(/REQ-\d{4}-(\d+)/);
+    return Math.max(m, match ? Number(match[1]) : 0);
+  },0);
+  return "REQ-"+ano+"-"+String(max+1).padStart(6,"0");
+}
+function clearForm(){
+  $("form").reset();
+  $("editIndex").value="";
+  $("formTitle").textContent="Nova Solicitação";
+  $("req").value=proximoReq();
+  $("dataReq").value=hoje();
+  $("competencia").value=mesAtual();
+  $("status").value="Aguardando Aprovação";
+  $("prioridade").value="Normal";
+  $("responsavel").value=localStorage.getItem("siga_user") || "";
+}
+function init(){
+  $("filtroStatus").innerHTML = `<option value="">Todos os status</option>` + STATUS.map(s=>`<option>${s}</option>`).join("");
+  clearForm();
+  carregarUsuario();
+  renderAll();
+}
+
+function alertas(){
+  const atual=mesAtual();
+  const arr=[];
+  dados.forEach((x,i)=>{
+    const d=diasAte(x.prazo);
+    if(!["Lançado no ERP","Finalizado"].includes(x.status)&&d<0) arr.push({i,icon:"🚨",titulo:"Prazo vencido",txt:`${x.req} venceu em ${dataBR(x.prazo)}.`});
+    else if(!["Lançado no ERP","Finalizado"].includes(x.status)&&d<=3) arr.push({i,icon:"⚠️",titulo:"Prazo próximo",txt:`${x.req} vence em ${d} dia(s).`});
+    if(!["Lançado no ERP","Finalizado"].includes(x.status)&&x.competencia&&x.competencia<atual) arr.push({i,icon:"🟣",titulo:"Risco de competência",txt:`${x.req} é da competência ${x.competencia}.`});
+    if(x.modulo==="Compras"&&!x.oc) arr.push({i,icon:"ℹ️",titulo:"Sem OC",txt:`${x.req} não possui OC vinculada.`});
+    if(x.prioridade==="Crítica"&&!["Lançado no ERP","Finalizado"].includes(x.status)) arr.push({i,icon:"🔥",titulo:"Prioridade crítica",txt:`${x.req} está crítica.`});
+  });
+  return arr;
+}
+function rowTable(list,full=true){
+  if(!list.length) return "<p style='color:var(--muted)'>Nenhum registro encontrado.</p>";
+  return `<table><thead><tr><th>Solicitação / OC</th><th>Módulo</th><th>Objeto</th><th>Etapa</th><th>Prazo</th><th>Operação</th>${full?"<th>Ações</th>":""}</tr></thead><tbody>`+
+  list.map(x=>{
+    const i=dados.indexOf(x);
+    const docs=documentos.filter(d=>d.req===x.req).length;
+    const axs=anexos.filter(a=>a.req===x.req).length;
+    return `<tr><td><strong style="color:var(--blue700)">${x.req}</strong><small>${x.oc||"Sem OC"}</small></td><td>${x.modulo}</td><td><strong>${x.desc}</strong><small>Favorecido: ${x.favorecido||"-"} • ${moeda(x.valor)}</small></td><td><span class="status ${cls(x.status)}">${x.status||"Aguardando Aprovação"}</span><small>Docs: ${docs} • Anexos: ${axs}</small></td><td>${dataBR(x.prazo)}<small>${x.competencia||"-"}</small></td><td><small>ERP: ${dataBR(x.dataErp)}<br>Pgto: ${dataBR(x.dataPagamento)}<br>Pend.: ${x.pendencias||"-"}</small></td>${full?`<td><div class="row-actions"><button onclick="dossie(${i})">👁️</button><button onclick="editar(${i})">✏️</button><button onclick="atualizarOperacao(${i})">⚙️</button><button onclick="excluir(${i})">🗑️</button></div></td>`:""}</tr>`;
+  }).join("")+"</tbody></table>";
+}
+function renderTables(){
+  const q=($("buscaDash").value||"").toLowerCase();
+  $("tableDash").innerHTML=rowTable(dados.filter(x=>JSON.stringify(x).toLowerCase().includes(q)).slice(0,8),false);
+  const qo=($("buscaOp").value||"").toLowerCase();
+  const fs=$("filtroStatus").value;
+  $("tableOp").innerHTML=rowTable(dados.filter(x=>(!fs||x.status===fs)&&JSON.stringify(x).toLowerCase().includes(qo)),true);
+}
+function renderDashboard(){
+  const open=dados.filter(x=>!["Lançado no ERP","Finalizado"].includes(x.status)).length;
+  const done=dados.length-open;
+  const als=alertas();
+  const crit=als.filter(a=>["🚨","🟣","🔥"].includes(a.icon)).length;
+  const total=dados.reduce((s,x)=>s+Number(x.valor||0),0);
+  const aberto=dados.filter(x=>!["Lançado no ERP","Finalizado"].includes(x.status)).reduce((s,x)=>s+Number(x.valor||0),0);
+  $("kOpen").textContent=open; $("kCrit").textContent=crit; $("kDocs").textContent=documentos.length; $("kDone").textContent=done;
+  $("alertCount").textContent=als.length+" alertas";
+  $("alertsMini").innerHTML=als.length ? als.slice(0,6).map(a=>`<div class="alert-row"><b>${a.icon}</b><div><strong>${a.titulo}</strong><p>${a.txt}</p></div><button onclick="dossie(${a.i})">Abrir</button></div>`).join("") : `<div class="alert-row"><b>✅</b><div><strong>Sem alertas</strong><p>Nenhuma pendência crítica.</p></div><button></button></div>`;
+  $("semOC").textContent=dados.filter(x=>x.modulo==="Compras"&&!x.oc).length;
+  $("riscoComp").textContent=als.filter(a=>a.titulo==="Risco de competência").length;
+  $("totalValor").textContent=moeda(total); $("valorAberto").textContent=moeda(aberto);
+  $("kAnexos").textContent=anexos.length; $("kAudit").textContent=audit.length;
+  $("relatorio").innerHTML=`<p><strong>Resumo:</strong> ${dados.length} solicitações, ${open} em andamento e ${done} finalizadas.</p><p><strong>Financeiro:</strong> total monitorado ${moeda(total)}; em andamento ${moeda(aberto)}.</p><p><strong>Governança:</strong> ${documentos.length} documentos, ${anexos.length} anexos e ${audit.length} eventos de auditoria.</p>`;
+}
+function renderAgenda(){
+  const list=dados.filter(x=>!["Lançado no ERP","Finalizado"].includes(x.status)).sort((a,b)=>(a.prazo||"9999").localeCompare(b.prazo||"9999"));
+  $("agendaCount").textContent=list.length+" itens";
+  $("agVencidos").textContent=list.filter(x=>diasAte(x.prazo)<0).length;
+  $("ag3").textContent=list.filter(x=>diasAte(x.prazo)>=0&&diasAte(x.prazo)<=3).length;
+  $("ag7").textContent=list.filter(x=>diasAte(x.prazo)>=0&&diasAte(x.prazo)<=7).length;
+  $("agendaList").innerHTML=list.length ? list.map(x=>{
+    const d=diasAte(x.prazo); const rot=d<0?"Vencido":d===0?"Hoje":d+" dias";
+    return `<div class="calendar-item"><div class="date-pill">${dataBR(x.prazo).slice(0,5)}<small>${rot}</small></div><div><strong>${x.req} • ${x.desc}</strong><small>${x.status} • ${x.competencia||"-"} • ${moeda(x.valor)}</small></div><button class="btn" onclick="dossie(${dados.indexOf(x)})">Abrir</button></div>`;
+  }).join("") : "<p class='subtle'>Nenhum prazo pendente.</p>";
+}
+function renderAudit(){
+  $("auditCount").textContent=audit.length+" eventos";
+  $("auditList").innerHTML=audit.length ? audit.map(a=>`<div class="timeline-item"><div class="timeline-dot">•</div><div class="timeline-box"><strong>${a.acao}</strong><small>${a.req} • ${dataHoraBR(a.data)}</small><p style="margin:6px 0 0;color:#334155;font-size:13px">${a.detalhe}</p></div></div>`).join("") : "<p class='subtle'>Nenhum evento.</p>";
+}
+function renderSearch(fromPage=false){
+  const q=((fromPage ? $("searchPageInput").value : $("globalSearch").value)||"").toLowerCase();
+  if(fromPage) $("globalSearch").value=q; else $("searchPageInput").value=q;
+  const res=[];
+  if(q){
+    dados.forEach((x,i)=>{ if(JSON.stringify(x).toLowerCase().includes(q)) res.push({tipo:"Solicitação",titulo:x.req+" • "+x.desc,sub:x.favorecido||"-",idx:i}); });
+    documentos.forEach(d=>{ if(JSON.stringify(d).toLowerCase().includes(q)){ const i=dados.findIndex(x=>x.req===d.req); res.push({tipo:"Documento",titulo:d.tipo+" • "+d.numero,sub:d.req+" • "+(d.obs||""),idx:i}); } });
+  }
+  $("searchCount").textContent=res.length+" resultados";
+  $("searchResults").innerHTML=res.length ? res.map(r=>`<div class="search-result"><strong>${r.tipo}: ${r.titulo}</strong><small>${r.sub}</small>${r.idx>=0?`<div class="actions" style="justify-content:flex-start"><button class="btn" onclick="dossie(${r.idx})">Abrir dossiê</button></div>`:""}</div>`).join("") : "<p class='subtle'>Digite uma palavra para pesquisar.</p>";
+}
+
+function renderCardsRecentes(){
+  const el = $("cardsRecentes");
+  if(!el) return;
+  const list = dados.slice(0,6);
+  el.innerHTML = list.length ? list.map((x)=>{
+    const i = dados.indexOf(x);
+    return `<div class="process-card">
+      <header>
+        <div><h4>${x.req}</h4><small>${x.modulo || "-"} • ${x.tipo || "-"}</small></div>
+        <span class="status ${cls(x.status)}">${x.status || "Aguardando Aprovação"}</span>
+      </header>
+      <p><strong>${x.desc || "Sem objeto"}</strong></p>
+      <p>Favorecido: ${x.favorecido || "-"}</p>
+      <div class="card-meta">
+        <div><small>OC</small><strong>${x.oc || "Sem OC"}</strong></div>
+        <div><small>Prazo</small><strong>${dataBR(x.prazo)}</strong></div>
+        <div><small>Valor</small><strong>${moeda(x.valor)}</strong></div>
+        <div><small>Competência</small><strong>${x.competencia || "-"}</strong></div>
+      </div>
+      <div class="actions" style="justify-content:flex-start">
+        <button class="btn primary" onclick="dossie(${i})">Abrir dossiê</button>
+      </div>
+    </div>`;
+  }).join("") : `<p class="subtle">Nenhuma solicitação cadastrada. Clique em <strong>Nova Solicitação</strong> para começar.</p>`;
+}
+
+function renderAll(){ save(); renderDashboard();renderCardsRecentes(); renderTables(); renderAgenda(); renderAudit(); renderSearch(true); }
+function page(id,btn){
+  document.querySelectorAll(".content>div").forEach(d=>d.classList.add("hidden"));
+  $(id).classList.remove("hidden");
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+  if(btn) btn.classList.add("active");
+  const names={
+    dashboard:["Dashboard Executivo","Visão geral das solicitações, prazos, operação, auditoria e documentos."],
+    nova:["Nova Solicitação","Cadastro mestre: dados gerais, favorecido, OC, NF, competência e observações."],
+    operacao:["Operação","Acompanhamento operacional sem duplicar favorecido ou documentos."],
+    agenda:["Agenda","Prazos e vencimentos."],
+    pesquisa:["Pesquisa Global","Localize solicitações, documentos, favorecidos, OC, status e auditoria."],
+    relatorios:["Relatórios","Resumo executivo."],
+    auditoria:["Auditoria","Trilha de alterações."],
+    assistente:["Assistente Interno","Consulta simples da base cadastrada."]
+  };
+  $("title").textContent=names[id][0]; $("subtitle").textContent=names[id][1];
+  if(id==="nova" && !$("editIndex").value) clearForm();
+  renderAll();
+}
+function pageById(id){ const btn=Array.from(document.querySelectorAll(".nav button")).find(b=>b.getAttribute("onclick")?.includes("'"+id+"'")); page(id,btn); }
+
+$("form").addEventListener("submit", e=>{
+  e.preventDefault();
+  const obj={
+    req:$("req").value||proximoReq(), dataReq:$("dataReq").value||hoje(), modulo:$("modulo").value||"Compras", tipo:$("tipo").value||"Nota Fiscal",
+    desc:$("desc").value, favorecido:$("favorecido").value, valor:Number($("valor").value||0), cc:$("cc").value, cr:$("cr").value, ud:$("ud").value,
+    competencia:$("competencia").value||mesAtual(), oc:$("oc").value, nf:$("nf").value, prazo:$("prazo").value, responsavel:$("responsavel").value,
+    prioridade:$("prioridade").value||"Normal", status:$("status").value||"Aguardando Aprovação", obs:$("obs").value,
+    dataOc:"", dataErp:"", dataPagamento:"", pendencias:""
+  };
+  const idx=$("editIndex").value;
+  if(idx!==""){
+    const antigo=dados[Number(idx)];
+    dados[Number(idx)]={...antigo,...obj};
+    addAudit(obj.req,"Solicitação alterada",`Status anterior: ${antigo.status}. Novo status: ${obj.status}.`);
+  } else {
+    dados.unshift(obj);
+    addAudit(obj.req,"Solicitação criada","Nova solicitação cadastrada.");
+  }
+  clearForm(); pageById("operacao"); toast("Solicitação salva.");
+});
+function editar(i){
+  const x=dados[i]; $("editIndex").value=i; $("req").value=x.req; $("dataReq").value=x.dataReq; $("modulo").value=x.modulo; $("tipo").value=x.tipo;
+  $("desc").value=x.desc; $("favorecido").value=x.favorecido; $("valor").value=x.valor; $("cc").value=x.cc||""; $("cr").value=x.cr||""; $("ud").value=x.ud||"";
+  $("competencia").value=x.competencia; $("oc").value=x.oc; $("nf").value=x.nf||""; $("prazo").value=x.prazo; $("responsavel").value=x.responsavel;
+  $("prioridade").value=x.prioridade; $("status").value=x.status||"Aguardando Aprovação"; $("obs").value=x.obs; $("formTitle").textContent="Editar Solicitação"; pageById("nova");
+}
+function atualizarOperacao(i){
+  const x=dados[i]; const novo=prompt("Novo status:",x.status||"Aguardando Aprovação"); if(!novo) return;
+  const pend=prompt("Pendências / Observação operacional:",x.pendencias||"")||"";
+  x.status=novo; x.pendencias=pend;
+  if(novo==="OC Emitida"&&!x.dataOc) x.dataOc=hoje();
+  if(novo==="Lançado no ERP"&&!x.dataErp) x.dataErp=hoje();
+  if(novo==="Finalizado"&&!x.dataPagamento) x.dataPagamento=hoje();
+  addAudit(x.req,"Operação atualizada",`Novo status: ${novo}. Pendências: ${pend||"-"}.`);
+  renderAll(); toast("Operação atualizada.");
+}
+function excluir(i){ if(confirm("Excluir solicitação?")){ addAudit(dados[i].req,"Solicitação excluída","Registro removido."); dados.splice(i,1); renderAll(); toast("Excluída."); } }
+function dossie(i){
+  const x=dados[i]; const docs=documentos.filter(d=>d.req===x.req); const axs=anexos.filter(a=>a.req===x.req); const au=audit.filter(a=>a.req===x.req);
+  $("modalTitle").textContent=x.req+" • Dossiê do Processo";
+  $("modalBody").innerHTML=`
+  <div class="dossie-head"><div class="panel"><h2 class="big-title">${x.desc}</h2><p class="subtle">Favorecido: <strong>${x.favorecido||"-"}</strong><br>Valor: <strong>${moeda(x.valor)}</strong> • Competência: <strong>${x.competencia||"-"}</strong></p><span class="status ${cls(x.status)}">${x.status}</span></div><div class="panel"><div class="metric"><span>OC</span><strong>${x.oc||"Sem OC"}</strong></div><div class="metric"><span>NF/Doc</span><strong>${x.nf||"-"}</strong></div><div class="metric"><span>Prazo</span><strong>${dataBR(x.prazo)}</strong></div></div></div>
+  <div class="tabs"><button class="active" onclick="showTab('tabDados',this)">Dados Gerais</button><button onclick="showTab('tabOper',this)">Operação</button><button onclick="showTab('tabDocs',this)">Documentos</button><button onclick="showTab('tabAudit',this)">Auditoria</button></div>
+  <div id="tabDados" class="tab"><div class="grid3"><div class="panel"><div class="metric"><span>Módulo</span><strong>${x.modulo}</strong></div><div class="metric"><span>Tipo</span><strong>${x.tipo}</strong></div><div class="metric"><span>Centro de Custo</span><strong>${x.cc||"-"}</strong></div></div><div class="panel"><div class="metric"><span>CR</span><strong>${x.cr||"-"}</strong></div><div class="metric"><span>UD</span><strong>${x.ud||"-"}</strong></div><div class="metric"><span>Responsável</span><strong>${x.responsavel||"-"}</strong></div></div><div class="panel"><strong>Histórico</strong><p class="subtle">${x.obs||"-"}</p></div></div></div>
+  <div id="tabOper" class="tab hidden"><div class="grid3"><div class="panel"><div class="metric"><span>Data OC</span><strong>${dataBR(x.dataOc)}</strong></div><div class="metric"><span>Data ERP</span><strong>${dataBR(x.dataErp)}</strong></div><div class="metric"><span>Pagamento</span><strong>${dataBR(x.dataPagamento)}</strong></div></div><div class="panel span2"><strong>Pendências</strong><p class="subtle">${x.pendencias||"Sem pendências registradas."}</p><button class="btn primary" onclick="closeModal();atualizarOperacao(${i})">Atualizar Operação</button></div></div></div>
+  <div id="tabDocs" class="tab hidden"><div class="grid"><div class="panel"><h3>Documentos</h3>${docs.length?docs.map(d=>`<div class="doc-card"><div><strong>📄 ${d.tipo} • ${d.numero}</strong><small>${d.obs||""} • ${dataHoraBR(d.data)}</small></div></div>`).join(""):"<p class='subtle'>Nenhum documento.</p>"}<div class="actions"><button class="btn primary" onclick="addDoc('${x.req}')">Adicionar documento</button></div></div><div class="panel"><h3>Anexos</h3>${axs.length?axs.map(a=>`<div class="attach-card"><div><strong>📎 ${a.nome}</strong><small>${a.tipo||"arquivo"} • ${dataHoraBR(a.data)}</small></div>${a.dataUrl?`<a class="btn" href="${a.dataUrl}" download="${a.nome}">Baixar</a>`:""}</div>`).join(""):"<p class='subtle'>Nenhum anexo.</p>"}<label class="dropzone" for="fileDossie"><strong>📎 Adicionar anexo</strong><input id="fileDossie" type="file" multiple onchange="addAnexo(event,'${x.req}')"></label></div></div></div>
+  <div id="tabAudit" class="tab hidden"><div class="panel"><div class="timeline">${au.length?au.map(a=>`<div class="timeline-item"><div class="timeline-dot">•</div><div class="timeline-box"><strong>${a.acao}</strong><small>${dataHoraBR(a.data)}</small><p style="margin:6px 0 0;color:#334155;font-size:13px">${a.detalhe}</p></div></div>`).join(""):"<p class='subtle'>Nenhum evento.</p>"}</div></div></div>`;
+  $("modal").classList.add("open");
+}
+function showTab(id,btn){ document.querySelectorAll(".tab").forEach(t=>t.classList.add("hidden")); $(id).classList.remove("hidden"); btn.parentElement.querySelectorAll("button").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); }
+function closeModal(){ $("modal").classList.remove("open"); }
+function addDoc(reqid){ const tipo=prompt("Tipo de documento:","Nota Fiscal"); if(!tipo)return; const numero=prompt("Número/identificação:",""); const obs=prompt("Observação:","")||""; documentos.unshift({req:reqid,tipo,numero:numero||"Sem identificação",obs,data:new Date().toISOString()}); addAudit(reqid,"Documento adicionado",`${tipo} registrado: ${numero||"Sem identificação"}.`); renderAll(); toast("Documento adicionado."); dossie(dados.findIndex(x=>x.req===reqid)); }
+function addAnexo(event,reqid){ Array.from(event.target.files||[]).forEach(f=>{ anexos.unshift({req:reqid,nome:f.name,tipo:f.type,tamanho:f.size,data:new Date().toISOString()}); addAudit(reqid,"Anexo adicionado",`Arquivo registrado: ${f.name}.`); }); event.target.value=""; renderAll(); toast("Anexo registrado."); dossie(dados.findIndex(x=>x.req===reqid)); }
+function fileToDataUrl(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+async function addAnexo(event,reqid){
+  const files = Array.from(event.target.files || []);
+  for(const f of files){
+    const dataUrl = await fileToDataUrl(f);
+    anexos.unshift({req:reqid,nome:f.name,tipo:f.type,tamanho:f.size,data:new Date().toISOString(),dataUrl});
+    addAudit(reqid,"Anexo adicionado","Arquivo armazenado localmente: " + f.name + ".");
+  }
+  event.target.value="";
+  renderAll();
+  toast("Anexo registrado e salvo no navegador.");
+  const i = dados.findIndex(x=>x.req===reqid);
+  if(i>=0) dossie(i);
+}
+function exportCSV(){ const cols=["req","dataReq","modulo","tipo","desc","favorecido","valor","cc","cr","ud","competencia","oc","nf","prazo","responsavel","prioridade","status","obs","dataOc","dataErp","dataPagamento","pendencias"]; const csv=[cols.join(";")].concat(dados.map(x=>cols.map(c=>`"${String(x[c]??"").replaceAll('"','""')}"`).join(";"))).join("\n"); const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="siga_solicitacoes.csv"; a.click(); }
+function exportBackup(){ const blob=new Blob([JSON.stringify({dados,documentos,anexos,audit},null,2)],{type:"application/json"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="backup_siga.json"; a.click(); }
+function importBackup(e){ const f=e.target.files[0]; if(!f)return; const r=new FileReader(); r.onload=ev=>{ const b=JSON.parse(ev.target.result); dados=b.dados||[]; documentos=b.documentos||[]; anexos=b.anexos||[]; audit=b.audit||[]; renderAll(); toast("Backup importado."); }; r.readAsText(f); }
+function resetAll(){ if(confirm("Deseja apagar todos os dados cadastrados?")){ dados=[]; documentos=[]; anexos=[]; audit=[]; save(); renderAll(); clearForm(); toast("Base limpa."); } }
+function responderIA(){ const q=($("pergunta").value||"").toLowerCase(); let resp=""; if(q.includes("venc")){ const l=dados.filter(x=>!["Lançado no ERP","Finalizado"].includes(x.status)&&diasAte(x.prazo)<=3); resp=l.length?l.map(x=>`• ${x.req} — ${x.desc} — ${dataBR(x.prazo)}`).join("<br>"):"Nenhum prazo próximo."; } else if(q.includes("sem oc")){ const l=dados.filter(x=>x.modulo==="Compras"&&!x.oc); resp=l.length?l.map(x=>`• ${x.req} — ${x.desc}`).join("<br>"):"Nenhum processo sem OC."; } else { const total=dados.reduce((s,x)=>s+Number(x.valor||0),0); resp=`Total de solicitações: ${dados.length}<br>Total monitorado: ${moeda(total)}<br>Documentos: ${documentos.length}<br>Auditoria: ${audit.length}`; } $("respostaIA").innerHTML=resp; }
+function quickAsk(q){ $("pergunta").value=q; responderIA(); }
+
+window.addEventListener("beforeunload", save);
+init();
+</script>
+</body>
+</html>
